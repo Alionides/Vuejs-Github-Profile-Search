@@ -1,0 +1,106 @@
+<html>
+
+<head>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+</head>
+
+<body>
+    
+  <div id="app" class="ui container centered">
+    <h1  class="ui center aligned container">GitHub Profiles</h1>
+    <!-- <div class="ui action input">
+        <input type="text" placeholder="Search..." v-model="search">
+        <button class="ui button" @click="searchUser">Search</button>
+    </div> -->
+    <github-user-card :username="search" ></github-user-card>
+
+    
+  </div>
+
+  <!-- Import Vue.js and axios -->
+  <script type="text/x-template" id="github-user-card-template">
+    <div class="ui four column centered grid">
+        <div class="column">
+            <div class="ui action input fluid">
+                <input v-on:keyup.enter="searchUser" type="text" placeholder="Search..." v-model="search">
+                <button class="ui button" @click="searchUser">Search</button>
+            </div>
+        </div>
+        <div class="four column centered row">
+          <div class="column">
+            <div class="ui card">
+                <div class="image">
+                    <img :src="user.avatar_url">
+                </div>
+                <div class="content">
+                    <a target="_blank" :href="`https://github.com/${user.login}`" class="header">{{user.name}}</a>
+                    <div class="meta">
+                    <span class="date">Joined in {{user.created_at}}</span>
+                    </div>
+                    <div class="description">
+                    {{user.bio}}
+                    </div>
+                </div>
+                <div class="extra content">
+                    <a>
+                    <i class="user icon"></i>
+                    {{user.followers}} Friends
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+  <script src="https://unpkg.com/vue@3"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <!-- Your JavaScript Code :) -->
+  <script>
+    Vue.createApp({
+        data(){
+            return{
+                search:'john'
+            }
+        },
+        // methods:{
+        //     async searchUser(){
+
+        //         this.search = 'alionides'
+        //         // this.username = this.search
+        //         const response = await axios.get(`https://api.github.com/users/${this.search}`)
+        //         this.user = response.data
+        //     }
+        // }
+    })
+    .component('github-user-card',{
+        template:'#github-user-card-template',
+        props:{
+            username:{type:String,required:true}
+        },
+        data(){
+            return{
+                user: {}
+            }
+        },
+        async created(){
+            const response = await axios.get(`https://api.github.com/users/${this.username}`)
+            this.user = response.data
+        },
+        methods:{
+            async searchUser(){
+
+                //this.search = 'alionides'
+                this.username = this.search
+                const response = await axios.get(`https://api.github.com/users/${this.search}`)
+                this.user = response.data
+            }
+        }
+    })
+    .mount('#app')
+  </script>
+</body>
+
+</html>
